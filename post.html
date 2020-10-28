@@ -1,0 +1,95 @@
+<html>
+
+<head>
+  <title>Post</title>
+  <link rel="stylesheet" href="dist/css/dropify.min.css">
+  <link rel="stylesheet" type="text/css" href="CSS/index.css">
+   <link rel="stylesheet" href="dist/css/dropify.css">
+   <style type="text/css">
+   	body
+   	{
+   		background-color: rgb(255, 153, 153);
+
+   	}
+   </style>
+</head>
+
+<body>
+	<div class="navbar">
+	<a href="index1.html" >All Pictures</a>
+<a href="post.html" class="active" >Publish</a>
+<a href="your.html" >Your Posts</a>
+<a href="like.html" >Liked Posts</a>
+</div>
+       <h1>Post your Pictures here</h1>
+  <form>
+    <input type="file" class="dropify" data-max-file-size="500K" />
+
+    <input type="submit" value="Post" class="post" align="center">
+  </form>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="dist/js/dropify.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
+
+  <script>
+     var firebaseConfig = {
+    apiKey: "AIzaSyDLg2d40DtVn8BZF7J87nejDBYbCrOBdao",
+    authDomain: "painterz-e63c0.firebaseapp.com",
+    databaseURL: "https://painterz-e63c0.firebaseio.com",
+    projectId: "painterz-e63c0",
+    storageBucket: "painterz-e63c0.appspot.com",
+    messagingSenderId: "790972299898",
+    appId: "1:790972299898:web:ed1eadc9172b7cb9b2d9c3",
+    measurementId: "G-G571KJGE03"
+  };
+
+    firebase.initializeApp(firebaseConfig);
+
+    var db = firebase.firestore();
+
+    $('.dropify').dropify();
+
+    firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    // User is signed in.
+
+   var user= firebase.auth().currentUser.uid;
+   localStorage.setItem('userid',user);
+
+  } else {
+    // No user is signed in.
+    alert("No such user exists")
+
+  }
+});
+
+
+    $("form").submit(function(event) {
+      event.preventDefault();
+      var userid= localStorage.getItem('userid');
+      alert('your image has been uploaded.');
+
+      var reader = new FileReader();
+      reader.readAsDataURL($(".dropify").prop('files')[0]);
+
+      reader.onloadend = function() {
+        db.collection("Images").add({
+          banner: reader.result
+        });
+
+        db.collection(userid).add({
+          banner: reader.result
+        });
+
+
+      }
+    });
+  </script>
+
+</body>
+
+</html>
